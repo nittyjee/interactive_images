@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Image Map with Video Popup and Fixed Points</title>
+    <title>Interactive Image Map with Specific Video Popups for Each Marker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body, html { height: 100%; margin: 0; padding: 0; }
@@ -46,7 +46,7 @@
 <div id="myModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <iframe src="https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        <iframe frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 </div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -68,23 +68,24 @@
     L.imageOverlay(imageUrl, imageBounds).addTo(map);
     map.fitBounds(imageBounds);
 
-    var center = [540, 960]; // Center of the image
-    var draggableMarker = L.marker(center, { draggable: true }).addTo(map);
-
-    // Fixed markers
-    var fixedPoints = [
-        [450, 1602], // Coordinates you provided
-        [500, 1500], // Example point 1
-        [600, 1400]  // Example point 2
+    var markers = [
+        { position: [540, 960], draggable: true, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+        { position: [450, 1602], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+        { position: [500, 1500], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+        { position: [600, 1400], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' }
     ];
 
-    fixedPoints.forEach(function(point) {
-        L.marker([point[0], point[1]], { draggable: false }).addTo(map);
+    markers.forEach(function(markerData) {
+        var marker = L.marker(markerData.position, { draggable: markerData.draggable }).addTo(map);
+        marker.on('click', function() {
+            showModal(markerData.videoUrl);
+        });
     });
 
-    draggableMarker.on('click', function() {
+    function showModal(videoUrl) {
         var modal = document.getElementById("myModal");
         var iframe = modal.querySelector("iframe");
+        iframe.src = videoUrl; // Set the video URL dynamically
         var maxHeight = window.innerHeight * 0.9;
         var maxWidth = window.innerWidth * 0.9;
         var aspectRatio = 1920 / 1080;
@@ -98,7 +99,7 @@
         }
 
         modal.style.display = "block";
-    });
+    }
 
     var span = document.getElementsByClassName("close")[0];
     span.onclick = function() {
