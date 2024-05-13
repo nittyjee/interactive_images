@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image with Video Overlay</title>
+<style>
+    .image-wrapper {
+        display: inline-block; /* Shrink-wraps to the size of the image */
+        position: relative; /* Allows absolute positioning inside it */
+    }
+    .image-wrapper img {
+        display: block; /* Removes space below the image */
+        max-width: 100%; /* Adjusts to the width of its container */
+        height: auto; /* Keeps the aspect ratio intact */
+        cursor: pointer; /* Indicates the image is clickable */
+    }
+    .video-overlay {
+        position: absolute; /* Positions over the image */
+        top: 0; /* Aligns to the top of the outer wrapper */
+        left: 0; /* Aligns to the left of the outer wrapper */
+        width: 100%; /* Takes the full width of the outer wrapper */
+        height: 100%; /* Takes the full height of the outer wrapper */
+        background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+        display: flex; /* Centers the iframe */
+        align-items: center; /* Vertically centers */
+        justify-content: center; /* Horizontally centers */
+        visibility: hidden; /* Hidden initially */
+    }
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+<script>
+    function toggleVideo() {
+        var videoOverlay = document.getElementById('videoOverlay');
+        videoOverlay.style.visibility = 'visible'; // Open the overlay
+    }
+
+    function closeVideo() {
+        var videoOverlay = document.getElementById('videoOverlay');
+        videoOverlay.style.visibility = 'hidden'; // Close the overlay
+    }
+
+    // Event to close the video if clicking outside of the video area
+    window.onclick = function(event) {
+        var videoOverlay = document.getElementById('videoOverlay');
+        if (event.target == videoOverlay) {
+            closeVideo();
+        }
+    }
+</script>
+</head>
+<body>
+
+<div class="image-wrapper">
+    <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Clickable Image to Show Video" onclick="toggleVideo()">
+    <div class="video-overlay" id="videoOverlay">
+        <span class="close-button" onclick="closeVideo()">×</span>
+        <iframe src="https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width: 90%; height: 90%;"></iframe>
+    </div>
+</div>
+
+</body>
+</html>
