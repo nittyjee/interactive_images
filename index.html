@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Image Map with Responsive Video Popup</title>
+    <title>Interactive Image Map with Video Popup and Fixed Points</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body, html { height: 100%; margin: 0; padding: 0; }
@@ -68,14 +68,26 @@
     L.imageOverlay(imageUrl, imageBounds).addTo(map);
     map.fitBounds(imageBounds);
 
-    var center = [540, 960];
-    var marker = L.marker(center, { draggable: true }).addTo(map);
-    marker.on('click', function() {
+    var center = [540, 960]; // Center of the image
+    var draggableMarker = L.marker(center, { draggable: true }).addTo(map);
+
+    // Fixed markers
+    var fixedPoints = [
+        [450, 1602], // Coordinates you provided
+        [500, 1500], // Example point 1
+        [600, 1400]  // Example point 2
+    ];
+
+    fixedPoints.forEach(function(point) {
+        L.marker([point[0], point[1]], { draggable: false }).addTo(map);
+    });
+
+    draggableMarker.on('click', function() {
         var modal = document.getElementById("myModal");
         var iframe = modal.querySelector("iframe");
         var maxHeight = window.innerHeight * 0.9;
         var maxWidth = window.innerWidth * 0.9;
-        var aspectRatio = 1920 / 1080; // Aspect ratio of the image map
+        var aspectRatio = 1920 / 1080;
 
         if (maxHeight * aspectRatio <= maxWidth) {
             iframe.style.width = maxHeight * aspectRatio + 'px';
