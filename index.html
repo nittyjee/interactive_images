@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Image Map with Video Popup</title>
+    <title>Interactive Image Map with Responsive Video Popup</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body, html { height: 100%; margin: 0; padding: 0; }
         #map {
-            width: 1920px;
-            height: 1080px;
+            width: 1920px; /* Fixed width */
+            height: 1080px; /* Fixed height */
             margin: auto;
         }
         .modal {
@@ -21,16 +21,23 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
             background-color: rgba(0,0,0,0.4);
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 5% auto; /* Smaller top margin */
+            margin-top: 1%;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
-            max-width: 800px;
+            width: auto; /* Auto width based on content */
+            max-width: 90%; /* Maximum width */
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+        iframe {
+            display: block; /* Ensures no extra space below the iframe */
+            width: 100%; /* Full width of the modal content */
+            height: auto; /* Auto height initially */
+            max-height: 90%; /* Maximum height */
         }
     </style>
 </head>
@@ -39,7 +46,7 @@
 <div id="myModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <iframe src="https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479" width="100%" height="450" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        <iframe src="https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 </div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -64,17 +71,30 @@
     var center = [540, 960];
     var marker = L.marker(center, { draggable: true }).addTo(map);
     marker.on('click', function() {
+        var modal = document.getElementById("myModal");
+        var iframe = modal.querySelector("iframe");
+        var maxHeight = window.innerHeight * 0.9;
+        var maxWidth = window.innerWidth * 0.9;
+        var aspectRatio = 1920 / 1080; // Aspect ratio of the image map
+
+        if (maxHeight * aspectRatio <= maxWidth) {
+            iframe.style.width = maxHeight * aspectRatio + 'px';
+            iframe.style.height = maxHeight + 'px';
+        } else {
+            iframe.style.width = maxWidth + 'px';
+            iframe.style.height = maxWidth / aspectRatio + 'px';
+        }
+
         modal.style.display = "block";
     });
 
-    var modal = document.getElementById("myModal");
     var span = document.getElementsByClassName("close")[0];
     span.onclick = function() {
-        modal.style.display = "none";
+        document.getElementById("myModal").style.display = "none";
     }
     window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+        if (event.target == document.getElementById("myModal")) {
+            document.getElementById("myModal").style.display = "none";
         }
     }
 
