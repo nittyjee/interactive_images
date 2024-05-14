@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Image with Video Overlay and SVG Marker</title>
+<title>Image with Video Overlay and Multiple SVG Markers</title>
 <style>
     .image-wrapper {
         display: inline-block; /* Shrink-wraps to the size of the image */
@@ -15,10 +15,10 @@
     }
     .marker {
         position: absolute;
-        top: 50%; /* Adjust these values based on your needs */
-        left: 50%; /* Adjust these values based on your needs */
-        transform: translate(-50%, -50%); /* Center the SVG exactly on the coordinates */
         cursor: pointer;
+        width: 24px; /* Width of the SVG icon */
+        height: 24px; /* Height of the SVG icon */
+        z-index: 10; /* Lower z-index than the overlay */
     }
     .video-overlay {
         position: absolute; /* Positions over the image */
@@ -31,6 +31,7 @@
         align-items: center; /* Vertically centers */
         justify-content: center; /* Horizontally centers */
         visibility: hidden; /* Hidden initially */
+        z-index: 100; /* Higher z-index to ensure it's on top */
     }
     .close-button {
         position: absolute;
@@ -43,43 +44,74 @@
     }
 </style>
 <script>
-    function toggleVideo() {
+    function toggleVideo(videoUrl) {
         var videoOverlay = document.getElementById('videoOverlay');
+        var iframe = document.querySelector('#videoOverlay iframe');
+        iframe.src = videoUrl; // Set the iframe src to the corresponding video URL
         videoOverlay.style.visibility = 'visible'; // Open the overlay
     }
 
     function closeVideo() {
         var videoOverlay = document.getElementById('videoOverlay');
         videoOverlay.style.visibility = 'hidden'; // Close the overlay
+        videoOverlay.querySelector('iframe').src = ''; // Clear the iframe src
     }
 
-    // Event to close the video if clicking outside of the video area
     window.onclick = function(event) {
         var videoOverlay = document.getElementById('videoOverlay');
         if (event.target == videoOverlay) {
             closeVideo();
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const markers = [
+            /* Company Garden */
+            { position: { x: 69.60, y: 22.19 }, videoUrl: 'https://player.vimeo.com/video/923190163?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Broadway */
+            { position: { x: 44.35, y: 33.83 }, videoUrl: 'https://player.vimeo.com/video/923332610?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Fort Amsterdam */
+            { position: { x: 34.60, y: 37.09 }, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Church */
+            { position: { x: 35.28, y: 44.87 }, videoUrl: 'https://player.vimeo.com/video/923328431?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* The Wall */
+            { position: { x: 75.54, y: 50.43 }, videoUrl: 'https://player.vimeo.com/video/923045201?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Canal */
+            { position: { x: 52.75, y: 58.00 }, videoUrl: 'https://player.vimeo.com/video/923329739?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Kierstede House */
+            { position: { x: 34.60, y: 64.87 }, videoUrl: 'https://player.vimeo.com/video/923187974?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* House of Enslaved Workers */
+            { position: { x: 51.95, y: 69.50 }, videoUrl: 'https://player.vimeo.com/video/923189450?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Dock */
+            { position: { x: 35.35, y: 74.22 }, videoUrl: 'https://player.vimeo.com/video/923191278?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* City Hall */
+            { position: { x: 49.00, y: 81.35 }, videoUrl: 'https://player.vimeo.com/video/923325156?badge=0&autopause=0&player_id=0&app_id=58479' }
+        ];
+
+        const imageWrapper = document.querySelector('.image-wrapper');
+        markers.forEach(marker => {
+            const svgElement = document.createElement('div');
+            svgElement.className = 'marker';
+            svgElement.style.left = marker.position.x + '%';
+            svgElement.style.top = marker.position.y + '%';
+            svgElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
+                    <circle cx="8" cy="8" r="8" fill="red"/>
+                    <circle cx="8" cy="8" r="3" fill="white"/>
+                </svg>`;
+            svgElement.onclick = () => toggleVideo(marker.videoUrl);
+            imageWrapper.appendChild(svgElement);
+        });
+    });
 </script>
 </head>
 <body>
-
-<div class="image-wrapper">
-    <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Background Image">
-    <div class="marker" onclick="toggleVideo()">
-        <!-- SVG icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-            <!-- Outer red circle -->
-            <circle cx="8" cy="8" r="8" fill="red"/>
-            <!-- Inner white circle -->
-            <circle cx="8" cy="8" r="3" fill="white"/>
-        </svg>                 
+    <div class="image-wrapper">
+        <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Background Image">
+        <div class="video-overlay" id="videoOverlay">
+            <span class="close-button" onclick="closeVideo()">×</span>
+            <iframe style="width: 90%; height: 90%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        </div>
     </div>
-    <div class="video-overlay" id="videoOverlay">
-        <span class="close-button" onclick="closeVideo()">×</span>
-        <iframe src="https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width: 90%; height: 90%;"></iframe>
-    </div>
-</div>
-
 </body>
 </html>
