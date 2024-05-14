@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image Coordinate Tool with SVG Placement and Position Log</title>
+<style>
+    .image-wrapper {
+        position: relative; /* Needed to correctly position the coordinates display and SVG icons */
+        display: inline-block; /* Shrink-wraps to the size of the image */
+    }
+    #coordinates, #positions {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background-color: rgba(255, 255, 255, 0.75);
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+    #positions {
+        right: auto;
+        left: 10px;
+        bottom: 10px;
+        white-space: nowrap;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    img {
+        display: block; /* Removes bottom space/margin */
+        max-width: 100%;
+        height: auto;
+    }
+    .svg-icon {
+        position: absolute;
+        cursor: pointer;
+        transform: translate(-50%, -50%); /* Center the icon on the click position */
+    }
+</style>
+</head>
+<body>
+
+<div class="image-wrapper">
+    <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Descriptive Alt Text" id="hoverImage">
+    <div id="coordinates">X: 0%, Y: 0%</div>
+    <div id="positions"></div>
+</div>
+
+<script>
+    const imageWrapper = document.getElementById('hoverImage');
+    const coordinatesDiv = document.getElementById('coordinates');
+    const positionsDiv = document.getElementById('positions');
+
+    imageWrapper.addEventListener('mousemove', function(event) {
+        const bounds = imageWrapper.getBoundingClientRect();
+        const x = event.clientX - bounds.left;
+        const y = event.clientY - bounds.top;
+        const xPercent = ((x / bounds.width) * 100).toFixed(2);
+        const yPercent = ((y / bounds.height) * 100).toFixed(2);
+        coordinatesDiv.textContent = `X: ${xPercent}%, Y: ${yPercent}%`;
+    });
+
+    imageWrapper.addEventListener('mouseleave', function() {
+        coordinatesDiv.textContent = `X: 0%, Y: 0%`;
+    });
+
+    imageWrapper.addEventListener('click', function(event) {
+        const bounds = imageWrapper.getBoundingClientRect();
+        const x = event.clientX - bounds.left;
+        const y = event.clientY - bounds.top;
+        const xPercent = ((x / bounds.width) * 100).toFixed(2);
+        const yPercent = ((y / bounds.height) * 100).toFixed(2);
+
+        // Create SVG icon
+        const svgIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svgIcon.setAttribute("class", "svg-icon");
+        svgIcon.setAttribute("width", "24");
+        svgIcon.setAttribute("height", "24");
+        svgIcon.setAttribute("viewBox", "0 0 16 16");
+        svgIcon.style.left = `${x}px`;
+        svgIcon.style.top = `${y}px`;
+
+        // Outer red circle
+        const outerCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        outerCircle.setAttribute("cx", "8");
+        outerCircle.setAttribute("cy", "8");
+        outerCircle.setAttribute("r", "8");
+        outerCircle.setAttribute("fill", "red");
+
+        // Inner white circle
+        const innerCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        innerCircle.setAttribute("cx", "8");
+        innerCircle.setAttribute("cy", "8");
+        innerCircle.setAttribute("r", "3");
+        innerCircle.setAttribute("fill", "white");
+
+        svgIcon.appendChild(outerCircle);
+        svgIcon.appendChild(innerCircle);
+        imageWrapper.parentNode.appendChild(svgIcon); // Append the SVG to the image wrapper
+
+        // Log the position
+        positionsDiv.innerHTML += `Point: X: ${xPercent}%, Y: ${yPercent}%<br>`;
+    });
+</script>
+
+</body>
+</html>
