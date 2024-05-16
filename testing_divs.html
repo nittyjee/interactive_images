@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <title>Image with Video Overlay and Multiple SVG Markers</title>
 <style>
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;  // Ensures no extra space within the body or html elements
+    }
+
     .image-wrapper {
         display: inline-block; /* Shrink-wraps to the size of the image */
         position: relative; /* Allows absolute positioning inside it */
@@ -13,12 +20,47 @@
         max-width: 100%; /* Adjusts to the width of its container */
         height: auto; /* Keeps the aspect ratio intact */
     }
+    @keyframes pulsate {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    @keyframes wave-animation {
+        0% {
+            transform: scale(0.5);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(2.5);
+            opacity: 0;
+        }
+    }
+    .wave {
+        position: absolute;
+        border: 5px solid rgb(255, 255, 255);
+        border-radius: 50%;
+        animation: wave-animation 2s infinite ease-out;
+        top: 48%;
+        left: 48%;
+        width: 14px;
+        height: 14px;
+        margin-top: -12px; /* Half of the height */
+        margin-left: -12px; /* Half of the width */
+        pointer-events: none; /* Allows clicking on the underlaying marker */
+        z-index: -5; /* Behind the marker but above the image */
+    }
     .marker {
         position: absolute;
         cursor: pointer;
         width: 24px; /* Width of the SVG icon */
         height: 24px; /* Height of the SVG icon */
         z-index: 10; /* Lower z-index than the overlay */
+        animation: pulsate 1.5s ease-in-out infinite; /* Apply the animation */
+    }
+    .marker svg {
+        display: block; /* Ensure SVG fills the marker container completely */
+        width: 100%;
+        height: 100%;
     }
     .video-overlay {
         position: absolute; /* Positions over the image */
@@ -42,8 +84,10 @@
         color: white;
         cursor: pointer;
     }
+    
 </style>
 <script>
+    
     function toggleVideo(videoUrl) {
         var videoOverlay = document.getElementById('videoOverlay');
         var iframe = document.querySelector('#videoOverlay iframe');
@@ -85,22 +129,49 @@
             /* Dock */
             { position: { x: 35.35, y: 74.22 }, videoUrl: 'https://player.vimeo.com/video/923191278?badge=0&autopause=0&player_id=0&app_id=58479' },
             /* City Hall */
-            { position: { x: 49.00, y: 81.35 }, videoUrl: 'https://player.vimeo.com/video/923325156?badge=0&autopause=0&player_id=0&app_id=58479' }
+            { position: { x: 49.00, y: 81.35 }, videoUrl: 'https://player.vimeo.com/video/923325156?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* About */
+            { position: { x: 4.31, y: 91.10 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479' }
         ];
 
         const imageWrapper = document.querySelector('.image-wrapper');
         markers.forEach(marker => {
-            const svgElement = document.createElement('div');
-            svgElement.className = 'marker';
-            svgElement.style.left = marker.position.x + '%';
-            svgElement.style.top = marker.position.y + '%';
+            const markerElement = document.createElement('div');
+            markerElement.className = 'marker';
+            markerElement.style.left = marker.position.x + '%';
+            markerElement.style.top = marker.position.y + '%';
+
+            // Create the core marker SVG
+            const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svgElement.setAttribute("viewBox", "0 0 16 16");
             svgElement.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
-                    <circle cx="8" cy="8" r="8" fill="red"/>
-                    <circle cx="8" cy="8" r="3" fill="white"/>
-                </svg>`;
-            svgElement.onclick = () => toggleVideo(marker.videoUrl);
-            imageWrapper.appendChild(svgElement);
+                <circle cx="8" cy="8" r="8" fill="red"/>
+                <circle cx="8" cy="8" r="3" fill="white"/>
+            `;
+
+            /* TEARDROP GEO ICON - WILL NEED TO ADJUST SIZE AND POSITION
+            // Replace this SVG with your new SVG
+                const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgElement.setAttribute("viewBox", "0 0 16 16");
+                svgElement.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                    </svg>
+            `;
+            */
+            
+            markerElement.appendChild(svgElement);
+
+            // Create waves
+            for (let i = 1; i <= 3; i++) {
+                const wave = document.createElement('div');
+                wave.className = 'wave';
+                wave.style.animationDelay = `${i * 0.7}s`; // stagger the animation
+                markerElement.appendChild(wave);
+            }
+
+            markerElement.onclick = () => toggleVideo(marker.videoUrl);
+            imageWrapper.appendChild(markerElement);
         });
     });
 </script>
