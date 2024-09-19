@@ -109,31 +109,30 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-    const markers = [
-        /* Company Garden */
-        { position: { x: 69.20, y: 22.19 }, videoUrl: 'https://player.vimeo.com/video/923190163?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* Broadway */
-        { position: { x: 44.00, y: 33.83 }, videoUrl: 'https://player.vimeo.com/video/923332610?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* Fort Amsterdam */
-        { position: { x: 34.20, y: 37.09 }, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* Church */
-        { position: { x: 34.90, y: 44.87 }, videoUrl: 'https://player.vimeo.com/video/923328431?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* The Wall */
-        { position: { x: 75.20, y: 50.43 }, videoUrl: 'https://player.vimeo.com/video/923045201?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* Canal */
-        { position: { x: 52.45, y: 58.00 }, videoUrl: 'https://player.vimeo.com/video/923329739?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* Kierstede House */
-        { position: { x: 34.20, y: 64.87 }, videoUrl: 'https://player.vimeo.com/video/923187974?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* House of Enslaved Workers */
-        { position: { x: 51.65, y: 69.50 }, videoUrl: 'https://player.vimeo.com/video/923189450?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* Dock */
-        { position: { x: 35.05, y: 74.22 }, videoUrl: 'https://player.vimeo.com/video/923191278?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* City Hall */
-        { position: { x: 48.70, y: 81.35 }, videoUrl: 'https://player.vimeo.com/video/923325156?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-        /* About */
-        { position: { x: 3.81, y: 89.10 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' }
-
-    ];
+        const markers = [
+            /* Company Garden */
+            { position: { x: 69.60, y: 22.19 }, videoUrl: 'https://player.vimeo.com/video/923190163?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Broadway */
+            { position: { x: 44.35, y: 33.83 }, videoUrl: 'https://player.vimeo.com/video/923332610?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Fort Amsterdam */
+            { position: { x: 34.60, y: 37.09 }, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Church */
+            { position: { x: 35.28, y: 44.87 }, videoUrl: 'https://player.vimeo.com/video/923328431?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* The Wall */
+            { position: { x: 75.54, y: 50.43 }, videoUrl: 'https://player.vimeo.com/video/923045201?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Canal */
+            { position: { x: 52.75, y: 58.00 }, videoUrl: 'https://player.vimeo.com/video/923329739?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Kierstede House */
+            { position: { x: 34.60, y: 64.87 }, videoUrl: 'https://player.vimeo.com/video/923187974?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* House of Enslaved Workers */
+            { position: { x: 51.95, y: 69.50 }, videoUrl: 'https://player.vimeo.com/video/923189450?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* Dock */
+            { position: { x: 35.35, y: 74.22 }, videoUrl: 'https://player.vimeo.com/video/923191278?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* City Hall */
+            { position: { x: 49.00, y: 81.35 }, videoUrl: 'https://player.vimeo.com/video/923325156?badge=0&autopause=0&player_id=0&app_id=58479' },
+            /* About */
+            { position: { x: 4.31, y: 91.10 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479' }
+        ];
 
         const imageWrapper = document.querySelector('.image-wrapper');
         markers.forEach(marker => {
@@ -182,7 +181,7 @@
         <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Background Image">
         <div class="video-overlay" id="videoOverlay">
             <span class="close-button" onclick="closeVideo()">×</span>
-            <iframe style="width: 90%; height: 90%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+            <iframe style="width: 90%; height: 90%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
         </div>
     </div>
 </body>
