@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <title>Image with Video Overlay and Multiple SVG Markers</title>
 <style>
-
     html, body {
         margin: 0;
         padding: 0;
-        height: 100%;  // Ensures no extra space within the body or html elements
+        height: 100%;  /* Ensures no extra space within the body or html elements */
     }
 
     .image-wrapper {
@@ -86,6 +85,7 @@
     }
     
 </style>
+<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
     
     function toggleVideo(videoUrl) {
@@ -93,12 +93,20 @@
         var iframe = document.querySelector('#videoOverlay iframe');
         iframe.src = videoUrl; // Set the iframe src to the corresponding video URL
         videoOverlay.style.visibility = 'visible'; // Open the overlay
+
+        // Vimeo Player API
+        const player = new Vimeo.Player(iframe);
+
+        // Add an event listener to close the video overlay when the video ends
+        player.on('ended', function() {
+            closeVideo(); // Close the video when it ends
+        });
     }
 
     function closeVideo() {
         var videoOverlay = document.getElementById('videoOverlay');
         videoOverlay.style.visibility = 'hidden'; // Close the overlay
-        videoOverlay.querySelector('iframe').src = ''; // Clear the iframe src
+        videoOverlay.querySelector('iframe').src = ''; // Clear the iframe src to stop the video
     }
 
     window.onclick = function(event) {
