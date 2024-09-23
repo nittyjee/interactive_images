@@ -5,24 +5,21 @@
 <title>Image with Video Overlay and Multiple SVG Markers</title>
 <style>
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%; /* Ensures full height */
-    background-color: black; /* Set the background color to black */
-    display: flex;
-    align-items: center; /* Vertically center the image */
-    justify-content: center; /* Horizontally center the image */
-}
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;  // Ensures no extra space within the body or html elements
+    }
 
-.image-wrapper img {
-    display: block;
-    max-width: 100vw; /* Fits the image within the window width */
-    max-height: 100vh; /* Fits the image within the window height */
-    width: auto; /* Maintain aspect ratio */
-    height: auto; /* Maintain aspect ratio */
-}
-
+    .image-wrapper {
+        display: inline-block; /* Shrink-wraps to the size of the image */
+        position: relative; /* Allows absolute positioning inside it */
+    }
+    .image-wrapper img {
+        display: block; /* Removes space below the image */
+        max-width: 100%; /* Adjusts to the width of its container */
+        height: auto; /* Keeps the aspect ratio intact */
+    }
     @keyframes pulsate {
         0% { transform: scale(1); }
         50% { transform: scale(1.2); }
@@ -127,7 +124,7 @@ html, body {
             /* Broadway */
             { position: { x: 44.35, y: 33.83 }, videoUrl: 'https://player.vimeo.com/video/923332610?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
             /* Fort Amsterdam */
-            { position: { x: 34.60, y: 37.09 }, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            { position: { x: 35.13, y: 37.49 }, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
             /* Church */
             { position: { x: 35.28, y: 44.87 }, videoUrl: 'https://player.vimeo.com/video/923328431?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
             /* The Wall */
