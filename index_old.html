@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Image Map with Specific Video Popups for Each Marker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body, html { height: 100%; margin: 0; padding: 0; }
+        #map {
+            width: 1920px; /* Fixed width */
+            height: 1080px; /* Fixed height */
+            margin: auto;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* Smaller top margin */
+            margin-top: 1%;
+            padding: 20px;
+            border: 1px solid #888;
+            width: auto; /* Auto width based on content */
+            max-width: 90%; /* Maximum width */
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+        iframe {
+            display: block; /* Ensures no extra space below the iframe */
+            width: 100%; /* Full width of the modal content */
+            height: auto; /* Auto height initially */
+            max-height: 90%; /* Maximum height */
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <iframe frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+</div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map', {
+        crs: L.CRS.Simple,
+        zoomControl: false,
+        attributionControl: false,
+        dragging: false,
+        touchZoom: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        keyboard: false
+    });
+
+    var imageUrl = 'https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png';
+    var imageBounds = [[0, 0], [1080, 1920]];
+    L.imageOverlay(imageUrl, imageBounds).addTo(map);
+    map.fitBounds(imageBounds);
+
+    var markers = [
+        { position: [540, 960], draggable: true, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+        { position: [450, 1602], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+        { position: [500, 1500], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
+        { position: [600, 1400], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' }
+    ];
+
+    markers.forEach(function(markerData) {
+        var marker = L.marker(markerData.position, { draggable: markerData.draggable }).addTo(map);
+        marker.on('click', function() {
+            showModal(markerData.videoUrl);
+        });
+    });
+
+    function showModal(videoUrl) {
+        var modal = document.getElementById("myModal");
+        var iframe = modal.querySelector("iframe");
+        iframe.src = videoUrl; // Set the video URL dynamically
+        var maxHeight = window.innerHeight * 0.9;
+        var maxWidth = window.innerWidth * 0.9;
+        var aspectRatio = 1920 / 1080;
+
+        if (maxHeight * aspectRatio <= maxWidth) {
+            iframe.style.width = maxHeight * aspectRatio + 'px';
+            iframe.style.height = maxHeight + 'px';
+        } else {
+            iframe.style.width = maxWidth + 'px';
+            iframe.style.height = maxWidth / aspectRatio + 'px';
+        }
+
+        modal.style.display = "block";
+    }
+
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == document.getElementById("myModal")) {
+            document.getElementById("myModal").style.display = "none";
+        }
+    }
+
+</script>
+</body>
+</html>

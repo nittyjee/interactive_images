@@ -1,116 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Image Map with Specific Video Popups for Each Marker</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        body, html { height: 100%; margin: 0; padding: 0; }
-        #map {
-            width: 1920px; /* Fixed width */
-            height: 1080px; /* Fixed height */
-            margin: auto;
+<meta charset="UTF-8">
+<title>Image with Video Overlay and Multiple SVG Markers</title>
+<style>
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Ensures full height */
+    background-color: black; /* Set the background color to black */
+    display: flex;
+    align-items: center; /* Vertically center the image */
+    justify-content: center; /* Horizontally center the image */
+}
+
+.image-wrapper img {
+    display: block;
+    max-width: 100vw; /* Fits the image within the window width */
+    max-height: 100vh; /* Fits the image within the window height */
+    width: auto; /* Maintain aspect ratio */
+    height: auto; /* Maintain aspect ratio */
+}
+
+    @keyframes pulsate {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    @keyframes wave-animation {
+        0% {
+            transform: scale(0.5);
+            opacity: 1;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+        100% {
+            transform: scale(2.5);
+            opacity: 0;
         }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; /* Smaller top margin */
-            margin-top: 1%;
-            padding: 20px;
-            border: 1px solid #888;
-            width: auto; /* Auto width based on content */
-            max-width: 90%; /* Maximum width */
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-        }
-        iframe {
-            display: block; /* Ensures no extra space below the iframe */
-            width: 100%; /* Full width of the modal content */
-            height: auto; /* Auto height initially */
-            max-height: 90%; /* Maximum height */
-        }
-    </style>
-</head>
-<body>
-<div id="map"></div>
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <iframe frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-    </div>
-</div>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    }
+    .wave {
+        position: absolute;
+        border: 5px solid rgb(255, 255, 255);
+        border-radius: 50%;
+        animation: wave-animation 2s infinite ease-out;
+        top: 48%;
+        left: 48%;
+        width: 14px;
+        height: 14px;
+        margin-top: -12px; /* Half of the height */
+        margin-left: -12px; /* Half of the width */
+        pointer-events: none; /* Allows clicking on the underlaying marker */
+        z-index: -5; /* Behind the marker but above the image */
+    }
+    .marker {
+        position: absolute;
+        cursor: pointer;
+        width: 24px; /* Width of the SVG icon */
+        height: 24px; /* Height of the SVG icon */
+        z-index: 10; /* Lower z-index than the overlay */
+        animation: pulsate 1.5s ease-in-out infinite; /* Apply the animation */
+    }
+    .marker svg {
+        display: block; /* Ensure SVG fills the marker container completely */
+        width: 100%;
+        height: 100%;
+    }
+    .video-overlay {
+        position: absolute; /* Positions over the image */
+        top: 0;
+        left: 0;
+        width: 100%; /* Takes the full width of the outer wrapper */
+        height: 100%; /* Takes the full height of the outer wrapper */
+        background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+        display: flex; /* Centers the iframe */
+        align-items: center; /* Vertically centers */
+        justify-content: center; /* Horizontally centers */
+        visibility: hidden; /* Hidden initially */
+        z-index: 100; /* Higher z-index to ensure it's on top */
+    }
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+    }
+    
+</style>
+<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-    var map = L.map('map', {
-        crs: L.CRS.Simple,
-        zoomControl: false,
-        attributionControl: false,
-        dragging: false,
-        touchZoom: false,
-        scrollWheelZoom: false,
-        doubleClickZoom: false,
-        boxZoom: false,
-        keyboard: false
-    });
+    
+    function toggleVideo(videoUrl) {
+        var videoOverlay = document.getElementById('videoOverlay');
+        var iframe = document.querySelector('#videoOverlay iframe');
+        iframe.src = videoUrl; // Set the iframe src to the corresponding video URL
+        videoOverlay.style.visibility = 'visible'; // Open the overlay
 
-    var imageUrl = 'https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png';
-    var imageBounds = [[0, 0], [1080, 1920]];
-    L.imageOverlay(imageUrl, imageBounds).addTo(map);
-    map.fitBounds(imageBounds);
+        // Vimeo Player API
+        const player = new Vimeo.Player(iframe);
 
-    var markers = [
-        { position: [540, 960], draggable: true, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
-        { position: [450, 1602], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
-        { position: [500, 1500], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' },
-        { position: [600, 1400], draggable: false, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479' }
-    ];
+        // Add an event listener to close the video overlay when the video ends
+        player.on('ended', function() {
+            closeVideo(); // Close the video when it ends
+        });
+    }
 
-    markers.forEach(function(markerData) {
-        var marker = L.marker(markerData.position, { draggable: markerData.draggable }).addTo(map);
-        marker.on('click', function() {
-            showModal(markerData.videoUrl);
+    function closeVideo() {
+        var videoOverlay = document.getElementById('videoOverlay');
+        videoOverlay.style.visibility = 'hidden'; // Close the overlay
+        videoOverlay.querySelector('iframe').src = ''; // Clear the iframe src to stop the video
+    }
+
+    window.onclick = function(event) {
+        var videoOverlay = document.getElementById('videoOverlay');
+        if (event.target == videoOverlay) {
+            closeVideo();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const markers = [
+            /* Company Garden */
+            { position: { x: 69.60, y: 22.19 }, videoUrl: 'https://player.vimeo.com/video/923190163?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* Broadway */
+            { position: { x: 44.35, y: 33.83 }, videoUrl: 'https://player.vimeo.com/video/923332610?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* Fort Amsterdam */
+            { position: { x: 34.60, y: 37.09 }, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* Church */
+            { position: { x: 35.28, y: 44.87 }, videoUrl: 'https://player.vimeo.com/video/923328431?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* The Wall */
+            { position: { x: 75.54, y: 50.43 }, videoUrl: 'https://player.vimeo.com/video/923045201?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* Canal */
+            { position: { x: 52.75, y: 58.00 }, videoUrl: 'https://player.vimeo.com/video/923329739?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* Kierstede House */
+            { position: { x: 34.60, y: 64.87 }, videoUrl: 'https://player.vimeo.com/video/923187974?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* House of Enslaved Workers */
+            { position: { x: 51.95, y: 69.50 }, videoUrl: 'https://player.vimeo.com/video/923189450?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* Dock */
+            { position: { x: 35.35, y: 74.22 }, videoUrl: 'https://player.vimeo.com/video/923191278?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* City Hall */
+            { position: { x: 49.00, y: 81.35 }, videoUrl: 'https://player.vimeo.com/video/923325156?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
+            /* About */
+            { position: { x: 4.31, y: 91.10 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' }
+        ];
+
+        const imageWrapper = document.querySelector('.image-wrapper');
+        markers.forEach(marker => {
+            const markerElement = document.createElement('div');
+            markerElement.className = 'marker';
+            markerElement.style.left = marker.position.x + '%';
+            markerElement.style.top = marker.position.y + '%';
+
+            // Create the core marker SVG
+            const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svgElement.setAttribute("viewBox", "0 0 16 16");
+            svgElement.innerHTML = `
+                <circle cx="8" cy="8" r="8" fill="red"/>
+                <circle cx="8" cy="8" r="3" fill="white"/>
+            `;
+
+            /* TEARDROP GEO ICON - WILL NEED TO ADJUST SIZE AND POSITION
+            // Replace this SVG with your new SVG
+                const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgElement.setAttribute("viewBox", "0 0 16 16");
+                svgElement.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                    </svg>
+            `;
+            */
+            
+            markerElement.appendChild(svgElement);
+
+            // Create waves
+            for (let i = 1; i <= 3; i++) {
+                const wave = document.createElement('div');
+                wave.className = 'wave';
+                wave.style.animationDelay = `${i * 0.7}s`; // stagger the animation
+                markerElement.appendChild(wave);
+            }
+
+            markerElement.onclick = () => toggleVideo(marker.videoUrl);
+            imageWrapper.appendChild(markerElement);
         });
     });
-
-    function showModal(videoUrl) {
-        var modal = document.getElementById("myModal");
-        var iframe = modal.querySelector("iframe");
-        iframe.src = videoUrl; // Set the video URL dynamically
-        var maxHeight = window.innerHeight * 0.9;
-        var maxWidth = window.innerWidth * 0.9;
-        var aspectRatio = 1920 / 1080;
-
-        if (maxHeight * aspectRatio <= maxWidth) {
-            iframe.style.width = maxHeight * aspectRatio + 'px';
-            iframe.style.height = maxHeight + 'px';
-        } else {
-            iframe.style.width = maxWidth + 'px';
-            iframe.style.height = maxWidth / aspectRatio + 'px';
-        }
-
-        modal.style.display = "block";
-    }
-
-    var span = document.getElementsByClassName("close")[0];
-    span.onclick = function() {
-        document.getElementById("myModal").style.display = "none";
-    }
-    window.onclick = function(event) {
-        if (event.target == document.getElementById("myModal")) {
-            document.getElementById("myModal").style.display = "none";
-        }
-    }
-
 </script>
+</head>
+<body>
+    <div class="image-wrapper">
+        <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Background Image">
+        <div class="video-overlay" id="videoOverlay">
+            <span class="close-button" onclick="closeVideo()">×</span>
+            <iframe style="width: 90%; height: 90%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+        </div>
+    </div>
 </body>
 </html>
