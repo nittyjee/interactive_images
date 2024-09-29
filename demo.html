@@ -87,30 +87,39 @@ html, body {
         color: white;
         cursor: pointer;
     }
-    
-</style>
-<script src="https://player.vimeo.com/api/player.js"></script>
-<script>
-    
-    function toggleVideo(videoUrl) {
-        var videoOverlay = document.getElementById('videoOverlay');
-        var iframe = document.querySelector('#videoOverlay iframe');
-        iframe.src = videoUrl; // Set the iframe src to the corresponding video URL
-        videoOverlay.style.visibility = 'visible'; // Open the overlay
 
-        // Vimeo Player API
-        const player = new Vimeo.Player(iframe);
-
-        // Add an event listener to close the video overlay when the video ends
-        player.on('ended', function() {
-            closeVideo(); // Close the video when it ends
-        });
+    video {
+        width: 90%;
+        height: 90%;
+        display: none; /* Hidden by default */
     }
 
-    function closeVideo() {
+</style>
+<script>
+    
+    function toggleVideo(videoId) {
         var videoOverlay = document.getElementById('videoOverlay');
+        var videoElement = document.getElementById(videoId);
+        
+        videoOverlay.style.visibility = 'visible'; // Open the overlay
+        videoElement.style.display = 'block'; // Display the video
+        videoElement.currentTime = 0; // Reset video time to the start
+        videoElement.play(); // Start the video
+
+        // Auto close the overlay when the video ends
+        videoElement.onended = function() {
+            closeVideo(videoId);
+        };
+    }
+
+    function closeVideo(videoId) {
+        var videoOverlay = document.getElementById('videoOverlay');
+        var videoElement = document.getElementById(videoId);
+        
         videoOverlay.style.visibility = 'hidden'; // Close the overlay
-        videoOverlay.querySelector('iframe').src = ''; // Clear the iframe src to stop the video
+        videoElement.style.display = 'none'; // Hide the video
+        videoElement.pause(); // Stop the video
+        videoElement.currentTime = 0; // Reset the video time
     }
 
     window.onclick = function(event) {
@@ -122,35 +131,17 @@ html, body {
 
     document.addEventListener('DOMContentLoaded', function() {
         const markers = [
-            /* Company Garden */
-            { position: { x: 69.60, y: 22.19 }, videoUrl: 'https://player.vimeo.com/video/923190163?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* Broadway */
-            { position: { x: 44.35, y: 33.83 }, videoUrl: 'https://player.vimeo.com/video/923332610?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* Fort Amsterdam */
-            { position: { x: 35.13, y: 37.49 }, videoUrl: 'https://player.vimeo.com/video/923190676?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* Church */
-            { position: { x: 35.28, y: 44.87 }, videoUrl: 'https://player.vimeo.com/video/923328431?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* The Wall */
-            { position: { x: 75.54, y: 50.43 }, videoUrl: 'https://player.vimeo.com/video/923045201?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* Canal */
-            { position: { x: 52.75, y: 58.00 }, videoUrl: 'https://player.vimeo.com/video/923329739?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* Kierstede House */
-            { position: { x: 34.60, y: 64.87 }, videoUrl: 'https://player.vimeo.com/video/923187974?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* House of Enslaved Workers */
-            { position: { x: 51.95, y: 69.50 }, videoUrl: 'https://player.vimeo.com/video/923189450?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* Dock */
-            { position: { x: 35.35, y: 74.22 }, videoUrl: 'https://player.vimeo.com/video/923191278?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* City Hall */
-            { position: { x: 49.00, y: 81.35 }, videoUrl: 'https://player.vimeo.com/video/923325156?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            /* About */
-            { position: { x: 4.31, y: 91.10 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' }
-            //12.8
-            //,
-            /* CORNERS TESTING */
-            //{ position: { x: 3.92, y: 92.01 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            //{ position: { x: 95.60, y: 89.87 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            //{ position: { x: 96.08, y: 1.56 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            //{ position: { x: 3.12, y: 2.13 }, videoUrl: 'https://player.vimeo.com/video/923333389?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' }
+            { position: { x: 69.60, y: 22.19 }, videoId: 'fort-amsterdam-video' },
+            { position: { x: 44.35, y: 33.83 }, videoId: 'broadway-video' },
+            { position: { x: 35.13, y: 37.49 }, videoId: 'fort-amsterdam-video' },
+            { position: { x: 35.28, y: 44.87 }, videoId: 'church-video' },
+            { position: { x: 75.54, y: 50.43 }, videoId: 'the-wall-video' },
+            { position: { x: 52.75, y: 58.00 }, videoId: 'canal-video' },
+            { position: { x: 34.60, y: 64.87 }, videoId: 'kierstede-house-video' },
+            { position: { x: 51.95, y: 69.50 }, videoId: 'house-of-enslaved-workers-video' },
+            { position: { x: 35.35, y: 74.22 }, videoId: 'dock-video' },
+            { position: { x: 49.00, y: 81.35 }, videoId: 'city-hall-video' },
+            { position: { x: 4.31, y: 91.10 }, videoId: 'about-video' }
         ];
 
         const imageWrapper = document.querySelector('.image-wrapper');
@@ -167,17 +158,6 @@ html, body {
                 <circle cx="8" cy="8" r="8" fill="red"/>
                 <circle cx="8" cy="8" r="3" fill="white"/>
             `;
-
-            /* TEARDROP GEO ICON - WILL NEED TO ADJUST SIZE AND POSITION
-            // Replace this SVG with your new SVG
-                const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                svgElement.setAttribute("viewBox", "0 0 16 16");
-                svgElement.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
-                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
-                    </svg>
-            `;
-            */
             
             markerElement.appendChild(svgElement);
 
@@ -189,19 +169,52 @@ html, body {
                 markerElement.appendChild(wave);
             }
 
-            markerElement.onclick = () => toggleVideo(marker.videoUrl);
+            markerElement.onclick = () => toggleVideo(marker.videoId);
             imageWrapper.appendChild(markerElement);
         });
     });
 </script>
 </head>
+
 <body>
     <div class="image-wrapper">
         <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Background Image">
         <div class="video-overlay" id="videoOverlay">
             <span class="close-button" onclick="closeVideo()">×</span>
-            <iframe style="width: 90%; height: 90%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
         </div>
     </div>
+
+    <!-- Local Video Elements -->
+    <video id="fort-amsterdam-video">
+        <source src="vids/Fort.webm" type="video/webm">
+    </video>
+    <video id="broadway-video">
+        <source src="vids/Broadway.webm" type="video/webm">
+    </video>
+    <video id="church-video">
+        <source src="vids/Church.webm" type="video/webm">
+    </video>
+    <video id="the-wall-video">
+        <source src="vids/Wall_Final.webm" type="video/webm">
+    </video>
+    <video id="canal-video">
+        <source src="vids/Canel.webm" type="video/webm">
+    </video>
+    <video id="kierstede-house-video">
+        <source src="vids/Kierstede.webm" type="video/webm">
+    </video>
+    <video id="house-of-enslaved-workers-video">
+        <source src="vids/HouseEnslaved_Final.webm" type="video/webm">
+    </video>
+    <video id="dock-video">
+        <source src="vids/Dock.webm" type="video/webm">
+    </video>
+    <video id="city-hall-video">
+        <source src="vids/CityHall.webm" type="video/webm">
+    </video>
+    <video id="about-video">
+        <source src="vids/AboutFinalFinal.webm" type="video/webm">
+    </video>
 </body>
+
 </html>
