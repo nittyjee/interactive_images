@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiosk Demo</title>
+  
+  <!-- Link to the manifest file for the PWA -->
+  <link rel="manifest" href="/nahc/kioskdemo/demo2/manifest.json">
+  
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .image-wrapper img {
+      display: block;
+      max-width: 100vw;
+      max-height: 100vh;
+      width: auto;
+      height: auto;
+    }
+    .install-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      display: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="image-wrapper">
+    <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Background Image">
+  </div>
+  
+  <button id="installBtn" class="install-button">Install Kiosk App</button>
+  
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/nahc/kioskdemo/demo2/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        }).catch(error => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block';
+
+      installBtn.addEventListener('click', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(choiceResult => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          }
+          deferredPrompt = null;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
