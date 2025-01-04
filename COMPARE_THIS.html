@@ -135,6 +135,23 @@ html, body {
 }
 
 
+.transparent-rectangle {
+    position: absolute;
+    background-color: #ffffff00; /* Makes the rectangle invisible */
+    cursor: pointer; /* Indicates it's clickable */
+    pointer-events: auto; /* Allows the rectangle to register clicks */
+    z-index: 10; /* Ensures it's above other elements */
+    border-radius: 10px;
+    /*animation: pulsate 1.5s ease-in-out infinite; /* Adds pulsating effect */
+    /*transition: transform 1s ease, background-color 0.2s ease;*/
+}
+
+.transparent-rectangle:active {
+    /*transform: scale(0.95); /* Slightly shrink the rectangle */
+    background-color: #ffffff; /* Change color temporarily */
+}
+
+
 
 video {
 
@@ -213,6 +230,28 @@ video {
     }
 
 
+    document.addEventListener('DOMContentLoaded', function () {
+    const markers = [
+        { position: { x: 1.0, y: 92.6, width: 7.3, height: 5.5 }, videoId: 'about-video', type: 'rectangle' }
+    ];
+
+    const imageWrapper = document.querySelector('.image-wrapper');
+
+    markers.forEach(marker => {
+        if (marker.type === 'rectangle') {
+            const rectangleElement = document.createElement('div');
+            rectangleElement.className = 'transparent-rectangle';
+            rectangleElement.style.left = marker.position.x + '%';
+            rectangleElement.style.top = marker.position.y + '%';
+            rectangleElement.style.width = marker.position.width + '%';
+            rectangleElement.style.height = marker.position.height + '%';
+
+            rectangleElement.onclick = () => toggleVideo(marker.videoId);
+            imageWrapper.appendChild(rectangleElement);
+        }
+    });
+});
+
 
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -238,9 +277,9 @@ video {
 
             { position: { x: 35.35, y: 74.22 }, videoId: 'dock-video' },
 
-            { position: { x: 49.00, y: 81.35 }, videoId: 'city-hall-video' },
+            { position: { x: 49.00, y: 81.35 }, videoId: 'city-hall-video' }
 
-            { position: { x: 4.31, y: 91.10 }, videoId: 'about-video' }
+            //{ position: { x: 4.31, y: 91.10 }, videoId: 'about-video' }
 
         ];
 
