@@ -1,437 +1,249 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
-<meta charset="UTF-8">
-
-<title>Image with Video Overlay and Multiple SVG Markers</title>
-
-<style>
-
-
-
-html, body {
-
-    margin: 0;
-
-    padding: 0;
-
-    height: 100%;
-
-    width: 100%;
-
-    background-color: black;
-
-}
-
-
-
-.image-wrapper {
-
-    width: 100vw;
-
-    height: 100vh;
-
-    background-image: url('images/Main_screen2.png'); /* Updated to use the local image */
-
-    background-size: contain; /* Ensures the image fits within the viewport without cropping */
-
-    background-position: center;
-
-    background-repeat: no-repeat;
-
-    position: relative;
-
-}
-
-
-
-
-
-@keyframes pulsate {
-
-    0% { transform: scale(1); }
-
-    50% { transform: scale(1.2); }
-
-    100% { transform: scale(1); }
-
-}
-
-@keyframes wave-animation {
-
-    0% {
-
-        transform: scale(0.5);
-
-        opacity: 1;
-
-    }
-
-    100% {
-
-        transform: scale(2.5);
-
-        opacity: 0;
-
-    }
-
-}
-
-.wave {
-
-    position: absolute;
-
-    border: 5px solid rgb(255, 255, 255);
-
-    border-radius: 50%;
-
-    animation: wave-animation 2s infinite ease-out;
-
-    top: 48%;
-
-    left: 48%;
-
-    width: 14px;
-
-    height: 14px;
-
-    margin-top: -12px; /* Half of the height */
-
-    margin-left: -12px; /* Half of the width */
-
-    pointer-events: none;
-
-    z-index: -5;
-
-}
-
-.marker {
-
-    position: absolute;
-
-    cursor: pointer;
-
-    width: 24px;
-
-    height: 24px;
-
-    z-index: 10;
-
-    animation: pulsate 1.5s ease-in-out infinite;
-
-}
-
-.marker svg {
-
-    display: block;
-
-    width: 100%;
-
-    height: 100%;
-
-}
-
-
-.transparent-rectangle {
-    position: absolute;
-    background-color: #ffffff00; /* Makes the rectangle invisible */
-    cursor: pointer; /* Indicates it's clickable */
-    pointer-events: auto; /* Allows the rectangle to register clicks */
-    z-index: 10; /* Ensures it's above other elements */
-    border-radius: 10px;
-    /*animation: pulsate 1.5s ease-in-out infinite; /* Adds pulsating effect */
-    /*transition: transform 1s ease, background-color 0.2s ease;*/
-}
-
-.transparent-rectangle:active {
-    /*transform: scale(0.95); /* Slightly shrink the rectangle */
-    background-color: #ffffff; /* Change color temporarily */
-}
-
-
-
-video {
-
-    width: 100vw;
-
-    height: 100vh;
-
-    object-fit: contain; /* Ensures the video fits within the viewport without cropping */
-
-    display: none;
-
-    position: absolute;
-
-    top: 0;
-
-    left: 0;
-
-    z-index: 50;
-
-}
-
-
-
-</style>
-
-<script>
-
-    
-
-    function toggleVideo(videoId) {
-
-        var videoElement = document.getElementById(videoId);
-
-        var imageWrapper = document.querySelector('.image-wrapper');
-
-        
-
-        imageWrapper.style.display = 'none'; // Hide the image when playing video
-
-        videoElement.style.display = 'block'; // Display the video
-
-        videoElement.currentTime = 0; // Reset video time to the start
-
-        videoElement.play(); // Start the video
-
-
-
-        // Auto close the video when the video ends
-
-        videoElement.onended = function() {
-
-            closeVideo(videoId);
-
-        };
-
-    }
-
-
-
-    function closeVideo(videoId) {
-
-        var videoElement = document.getElementById(videoId);
-
-        var imageWrapper = document.querySelector('.image-wrapper');
-
-        
-
-        videoElement.style.display = 'none'; // Hide the video
-
-        videoElement.pause(); // Stop the video
-
-        videoElement.currentTime = 0; // Reset the video time
-
-        imageWrapper.style.display = 'block'; // Show the image when the video ends
-
-    }
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-    const markers = [
-        { position: { x: 1.0, y: 92.6, width: 7.3, height: 5.5 }, videoId: 'about-video', type: 'rectangle' }
-    ];
-
-    const imageWrapper = document.querySelector('.image-wrapper');
-
-    markers.forEach(marker => {
-        if (marker.type === 'rectangle') {
-            const rectangleElement = document.createElement('div');
-            rectangleElement.className = 'transparent-rectangle';
-            rectangleElement.style.left = marker.position.x + '%';
-            rectangleElement.style.top = marker.position.y + '%';
-            rectangleElement.style.width = marker.position.width + '%';
-            rectangleElement.style.height = marker.position.height + '%';
-
-            rectangleElement.onclick = () => toggleVideo(marker.videoId);
-            imageWrapper.appendChild(rectangleElement);
+    <meta charset="UTF-8">
+    <title>Image with Video Overlay and Multiple SVG Markers</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: black;
         }
-    });
-});
 
+        .image-wrapper {
+            width: 100vw;
+            height: 100vh;
+            background-image: url('images/Main_screen2.png');
+            /* Updated to use the local image */
+            background-size: contain;
+            /* Ensures the image fits within the viewport without cropping */
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
 
-    document.addEventListener('DOMContentLoaded', function() {
-
-        const markers = [
-
-            { position: { x: 29.00, y: 69.50 }, videoId: 'stuyvesant-house' },
-
-            { position: { x: 69.60, y: 22.19 }, videoId: 'company-garden-video' },
-
-            { position: { x: 44.35, y: 33.83 }, videoId: 'broadway-video' },
-
-            { position: { x: 35.13, y: 37.49 }, videoId: 'fort-amsterdam-video' },
-
-            { position: { x: 35.28, y: 44.87 }, videoId: 'church-video' },
-
-            { position: { x: 75.54, y: 50.43 }, videoId: 'the-wall-video' },
-
-            { position: { x: 52.75, y: 58.00 }, videoId: 'canal-video' },
-
-            { position: { x: 34.60, y: 64.87 }, videoId: 'kierstede-house-video' },
-
-            { position: { x: 51.95, y: 69.50 }, videoId: 'house-of-enslaved-workers-video' },
-
-            { position: { x: 35.35, y: 74.22 }, videoId: 'dock-video' },
-
-            { position: { x: 49.00, y: 81.35 }, videoId: 'city-hall-video' }
-
-            //{ position: { x: 4.31, y: 91.10 }, videoId: 'about-video' }
-
-        ];
-
-
-
-        const imageWrapper = document.querySelector('.image-wrapper');
-
-        markers.forEach(marker => {
-
-            const markerElement = document.createElement('div');
-
-            markerElement.className = 'marker';
-
-            markerElement.style.left = marker.position.x + '%';
-
-            markerElement.style.top = marker.position.y + '%';
-
-
-
-            // Create the core marker SVG
-
-            const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
-            svgElement.setAttribute("viewBox", "0 0 16 16");
-
-            svgElement.innerHTML = `
-
-                <circle cx="8" cy="8" r="8" fill="red"/>
-
-                <circle cx="8" cy="8" r="3" fill="white"/>
-
-            `;
-
-            
-
-            markerElement.appendChild(svgElement);
-
-
-
-            // Create waves
-
-            for (let i = 1; i <= 3; i++) {
-
-                const wave = document.createElement('div');
-
-                wave.className = 'wave';
-
-                wave.style.animationDelay = `${i * 0.7}s`; // stagger the animation
-
-                markerElement.appendChild(wave);
-
+        @keyframes pulsate {
+            0% {
+                transform: scale(1);
             }
 
+            50% {
+                transform: scale(1.2);
+            }
 
+            100% {
+                transform: scale(1);
+            }
+        }
 
-            markerElement.onclick = () => toggleVideo(marker.videoId);
+        @keyframes wave-animation {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
 
-            imageWrapper.appendChild(markerElement);
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
 
+        .wave {
+            position: absolute;
+            border: 5px solid rgb(255, 255, 255);
+            border-radius: 50%;
+            animation: wave-animation 2s infinite ease-out;
+            top: 48%;
+            left: 48%;
+            width: 14px;
+            height: 14px;
+            margin-top: -12px;
+            /* Half of the height */
+            margin-left: -12px;
+            /* Half of the width */
+            pointer-events: none;
+            z-index: -5;
+        }
+
+        .marker {
+            position: absolute;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            z-index: 10;
+            animation: pulsate 1.5s ease-in-out infinite;
+        }
+
+        .marker svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .transparent-rectangle {
+            position: absolute;
+            background-color: #ffffff00;
+            /* Makes the rectangle invisible */
+            cursor: pointer;
+            /* Indicates it's clickable */
+            pointer-events: auto;
+            /* Allows the rectangle to register clicks */
+            z-index: 10;
+            /* Ensures it's above other elements */
+            border-radius: 10px;
+            /*animation: pulsate 1.5s ease-in-out infinite; /* Adds pulsating effect */
+            /*transition: transform 1s ease, background-color 0.2s ease;*/
+        }
+
+        .transparent-rectangle:active {
+            /*transform: scale(0.95); /* Slightly shrink the rectangle */
+            background-color: #ffffff;
+            /* Change color temporarily */
+        }
+
+        video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            /* Ensures the video fits within the viewport without cropping */
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+    </style>
+    <script>
+
+        function toggleVideo(videoId) {
+            var videoElement = document.getElementById(videoId);
+            var imageWrapper = document.querySelector('.image-wrapper');
+            imageWrapper.style.display = 'none'; // Hide the image when playing video
+            videoElement.style.display = 'block'; // Display the video
+            videoElement.currentTime = 0; // Reset video time to the start
+            videoElement.play(); // Start the video
+            // Auto close the video when the video ends
+            videoElement.onended = function () {
+                closeVideo(videoId);
+            };
+        }
+
+        function closeVideo(videoId) {
+            var videoElement = document.getElementById(videoId);
+            var imageWrapper = document.querySelector('.image-wrapper');
+            videoElement.style.display = 'none'; // Hide the video
+            videoElement.pause(); // Stop the video
+            videoElement.currentTime = 0; // Reset the video time
+            imageWrapper.style.display = 'block'; // Show the image when the video ends
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const markers = [
+                { position: { x: 1.0, y: 92.6, width: 7.3, height: 5.5 }, videoId: 'about-video', type: 'rectangle' }
+            ];
+            const imageWrapper = document.querySelector('.image-wrapper');
+            markers.forEach(marker => {
+                if (marker.type === 'rectangle') {
+                    const rectangleElement = document.createElement('div');
+                    rectangleElement.className = 'transparent-rectangle';
+                    rectangleElement.style.left = marker.position.x + '%';
+                    rectangleElement.style.top = marker.position.y + '%';
+                    rectangleElement.style.width = marker.position.width + '%';
+                    rectangleElement.style.height = marker.position.height + '%';
+
+                    rectangleElement.onclick = () => toggleVideo(marker.videoId);
+                    imageWrapper.appendChild(rectangleElement);
+                }
+            });
         });
 
-    });
+        document.addEventListener('DOMContentLoaded', function () {
+            const markers = [
+                { position: { x: 29.00, y: 69.50 }, videoId: 'stuyvesant-house' },
+                { position: { x: 69.60, y: 22.19 }, videoId: 'company-garden-video' },
+                { position: { x: 44.35, y: 33.83 }, videoId: 'broadway-video' },
+                { position: { x: 35.13, y: 37.49 }, videoId: 'fort-amsterdam-video' },
+                { position: { x: 35.28, y: 44.87 }, videoId: 'church-video' },
+                { position: { x: 75.54, y: 50.43 }, videoId: 'the-wall-video' },
+                { position: { x: 52.75, y: 58.00 }, videoId: 'canal-video' },
+                { position: { x: 34.60, y: 64.87 }, videoId: 'kierstede-house-video' },
+                { position: { x: 51.95, y: 69.50 }, videoId: 'house-of-enslaved-workers-video' },
+                { position: { x: 35.35, y: 74.22 }, videoId: 'dock-video' },
+                { position: { x: 49.00, y: 81.35 }, videoId: 'city-hall-video' }
+                //{ position: { x: 4.31, y: 91.10 }, videoId: 'about-video' }
+            ];
+            const imageWrapper = document.querySelector('.image-wrapper');
+            markers.forEach(marker => {
+                const markerElement = document.createElement('div');
+                markerElement.className = 'marker';
+                markerElement.style.left = marker.position.x + '%';
+                markerElement.style.top = marker.position.y + '%';
+                // Create the core marker SVG
+                const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svgElement.setAttribute("viewBox", "0 0 16 16");
+                svgElement.innerHTML = `
+                <circle cx="8" cy="8" r="8" fill="red"/>
+                <circle cx="8" cy="8" r="3" fill="white"/>
+            `;
+                markerElement.appendChild(svgElement);
+                // Create waves
+                for (let i = 1; i <= 3; i++) {
+                    const wave = document.createElement('div');
+                    wave.className = 'wave';
+                    wave.style.animationDelay = `${i * 0.7}s`; // stagger the animation
+                    markerElement.appendChild(wave);
+                }
+                markerElement.onclick = () => toggleVideo(marker.videoId);
+                imageWrapper.appendChild(markerElement);
+            });
+        });
 
-</script>
-
+    </script>
 </head>
 
-
-
 <body>
-
     <div class="image-wrapper"></div>
-
-
-
     <!-- Local Video Elements -->
-
     <video id="stuyvesant-house">
-
         <source src="vids/StuyvesantHouse.webm" type="video/webm">
-
     </video>
-
     <video id="fort-amsterdam-video">
-
         <source src="vids/Fort.webm" type="video/webm">
-
     </video>
-
     <video id="company-garden-video">
-
         <source src="vids/Garden.webm" type="video/webm">
-
     </video>
-
     <video id="broadway-video">
-
         <source src="vids/Broadway.webm" type="video/webm">
-
     </video>
-
     <video id="church-video">
-
         <source src="vids/Church.webm" type="video/webm">
-
     </video>
-
     <video id="the-wall-video">
-
         <source src="vids/Wall_Final.webm" type="video/webm">
-
     </video>
-
     <video id="canal-video">
-
         <source src="vids/Canel.webm" type="video/webm">
-
     </video>
-
     <video id="kierstede-house-video">
-
         <source src="vids/Kierstede.webm" type="video/webm">
-
     </video>
-
     <video id="house-of-enslaved-workers-video">
-
         <source src="vids/HouseEnslaved_Final.webm" type="video/webm">
-
     </video>
-
     <video id="dock-video">
-
         <source src="vids/Dock.webm" type="video/webm">
-
     </video>
-
     <video id="city-hall-video">
-
         <source src="vids/CityHall.webm" type="video/webm">
-
     </video>
-
     <video id="about-video">
-
         <source src="vids/AboutFinalFinal.webm" type="video/webm">
-
     </video>
-
 </body>
 
-
-
 </html>
-
