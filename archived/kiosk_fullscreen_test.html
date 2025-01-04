@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiosk Mode Demo</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #333;
+            color: white;
+        }
+        .presentation {
+            display: none;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+        #exit-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            display: none;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Link to trigger kiosk mode -->
+    <a href="#" onclick="openKioskMode()">Open Presentation in Kiosk Mode</a>
+
+    <!-- Hidden presentation content -->
+    <div class="presentation" id="presentation">
+        <h1>Welcome to Kiosk Mode!</h1>
+        <p>This is your presentation in full-screen mode.</p>
+    </div>
+
+    <!-- Exit button to close kiosk mode -->
+    <button id="exit-btn" onclick="closeKiosk()">Exit Kiosk Mode</button>
+
+    <script>
+        // Function to open the presentation in full-screen mode
+        function openKioskMode() {
+            const presentation = document.getElementById('presentation');
+            const exitBtn = document.getElementById('exit-btn');
+
+            // Show the presentation content and hide the link
+            document.body.innerHTML = presentation.outerHTML;
+            document.getElementById('presentation').style.display = 'flex';
+            exitBtn.style.display = 'block';
+
+            // Request full-screen mode
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+                document.documentElement.msRequestFullscreen();
+            }
+
+            // Disable ESC and F11 keys for exiting fullscreen
+            document.addEventListener('keydown', preventExitKeys);
+        }
+
+        // Function to close full-screen mode and window
+        function closeKiosk() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
+            window.close();
+        }
+
+        // Prevent ESC or F11 from exiting full-screen mode
+        function preventExitKeys(e) {
+            // Prevent the ESC key (key code 27) or F11 key (key code 122)
+            if (e.keyCode === 27 || e.keyCode === 122) {
+                e.preventDefault();
+            }
+        }
+
+        // Disable right-click menu
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    </script>
+</body>
+</html>

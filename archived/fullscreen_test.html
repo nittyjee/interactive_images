@@ -92,7 +92,7 @@ html, body {
     width: 100%; /* Takes the full width of the outer wrapper */
     height: 100%; /* Takes the full height of the outer wrapper */
     background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
-    display: flex; /* Centers the iframe */
+    display: flex; /* Centers the video */
     align-items: center; /* Vertically centers */
     justify-content: center; /* Horizontally centers */
     visibility: hidden; /* Hidden initially */
@@ -109,27 +109,22 @@ html, body {
 }
     
 </style>
-<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-    function toggleVideo(videoUrl) {
+    function toggleVideo(videoId) {
         var videoOverlay = document.getElementById('videoOverlay');
-        var iframe = document.querySelector('#videoOverlay iframe');
-        iframe.src = videoUrl; // Set the iframe src to the corresponding video URL
-        videoOverlay.style.visibility = 'visible'; // Open the overlay
-
-        // Vimeo Player API
-        const player = new Vimeo.Player(iframe);
-
-        // Add an event listener to close the video overlay when the video ends
-        player.on('ended', function() {
-            closeVideo(); // Close the video when it ends
-        });
+        var videoElement = document.getElementById(videoId);
+        videoElement.style.display = 'block'; // Show the video
+        videoElement.currentTime = 0; // Start from the beginning
+        videoElement.play(); // Play the video
+        videoOverlay.style.visibility = 'visible'; // Show the overlay
     }
 
-    function closeVideo() {
+    function closeVideo(videoId) {
         var videoOverlay = document.getElementById('videoOverlay');
-        videoOverlay.style.visibility = 'hidden'; // Close the overlay
-        videoOverlay.querySelector('iframe').src = ''; // Clear the iframe src to stop the video
+        var videoElement = document.getElementById(videoId);
+        videoElement.style.display = 'none'; // Hide the video
+        videoElement.pause(); // Pause the video
+        videoOverlay.style.visibility = 'hidden'; // Hide the overlay
     }
 
     // Fullscreen toggle function
@@ -159,9 +154,8 @@ html, body {
     // Set up markers and video overlay
     document.addEventListener('DOMContentLoaded', function() {
         const markers = [
-            { position: { x: 69.60, y: 22.19 }, videoUrl: 'https://player.vimeo.com/video/923190163?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            { position: { x: 44.35, y: 33.83 }, videoUrl: 'https://player.vimeo.com/video/923332610?badge=0&autopause=0&player_id=0&app_id=58479&fullscreen=1&autoplay=1' },
-            // Add more markers as needed
+            { position: { x: 69.60, y: 22.19 }, videoId: 'company-garden-video' },
+            { position: { x: 44.35, y: 33.83 }, videoId: 'broadway-video' },
         ];
 
         const imageWrapper = document.querySelector('.image-wrapper');
@@ -179,7 +173,7 @@ html, body {
             `;
             
             markerElement.appendChild(svgElement);
-            markerElement.onclick = () => toggleVideo(marker.videoUrl);
+            markerElement.onclick = () => toggleVideo(marker.videoId);
             imageWrapper.appendChild(markerElement);
         });
     });
@@ -188,9 +182,22 @@ html, body {
 <body>
     <div class="image-wrapper">
         <img src="https://newamsterdamhistorycenter.org/wp-content/uploads/2024/02/Main_screen2.png" alt="Background Image">
+
+        <!-- Video Overlay -->
         <div class="video-overlay" id="videoOverlay">
             <span class="close-button" onclick="closeVideo()">×</span>
-            <iframe style="width: 90%; height: 90%;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+
+            <!-- Company Garden Video -->
+            <video id="company-garden-video" style="display:none;" controls>
+                <source src="vids/Garden.webm" type="video/webm">
+                Your browser does not support the video tag.
+            </video>
+
+            <!-- Broadway Video -->
+            <video id="broadway-video" style="display:none;" controls>
+                <source src="vids/Broadway.webm" type="video/webm">
+                Your browser does not support the video tag.
+            </video>
         </div>
     </div>
 
