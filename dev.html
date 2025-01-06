@@ -84,6 +84,49 @@
             height: 100%;
         }
 
+        .transparent-rectangle {
+            position: absolute;
+            background-color: #ffffff00;
+            /* Makes the rectangle invisible */
+            cursor: pointer;
+            /* Indicates it's clickable */
+            pointer-events: auto;
+            /* Allows the rectangle to register clicks */
+            z-index: 100;
+            /* Ensures it's above other elements */
+            border-radius: 10px;
+            /*animation: pulsate 1.5s ease-in-out infinite; /* Adds pulsating effect */
+            /*transition: transform 1s ease, background-color 0.2s ease;*/
+        }
+
+        .transparent-rectangle:active {
+            /*transform: scale(0.95); /* Slightly shrink the rectangle */
+            background-color: #ffffff;
+            /* Change color temporarily */
+        }
+
+        .close-button {
+            position: absolute;
+            top: 2%; /* Same as "About" rectangle position */
+            left: 1%;   /* Same as "About" rectangle position */
+            width: 9%;
+            height: 7%;
+            background-color: #ffffff00;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+            z-index: 100;
+        }
+
+        .close-button:active {
+            /*transform: scale(0.95); /* Slightly shrink the rectangle */
+            background-color: rgba(255, 255, 255, 0.5);
+            /* Change color temporarily */
+        }
+
         video {
             width: 100vw;
             height: 100vh;
@@ -98,33 +141,75 @@
     </style>
     <script>
 
+        let currentVideoId = null;
+
         function toggleVideo(videoId) {
-            var videoElement = document.getElementById(videoId);
-            var imageWrapper = document.querySelector('.image-wrapper');
+            const videoElement = document.getElementById(videoId);
+            const closeButton = document.getElementById("close-video-btn");
+            const imageWrapper = document.querySelector('.image-wrapper');
 
-            imageWrapper.style.display = 'none'; // Hide the image when playing video
-            videoElement.style.display = 'block'; // Display the video
-            videoElement.currentTime = 0; // Reset video time to the start
-            videoElement.play(); // Start the video
+            // Hide the image, show the video, and show the close button
+            imageWrapper.style.display = 'none';
+            videoElement.style.display = 'block';
+            closeButton.style.display = 'block';
 
-            // Auto close the video when the video ends
+            // Play the video
+            videoElement.currentTime = 0;
+            videoElement.play();
+
+            // Set the current video ID
+            currentVideoId = videoId;
+
+            // Automatically close when the video ends
             videoElement.onended = function () {
-                closeVideo(videoId);
+                closeVideo();
             };
         }
 
-        function closeVideo(videoId) {
-            var videoElement = document.getElementById(videoId);
-            var imageWrapper = document.querySelector('.image-wrapper');
+        function closeVideo() {
+            if (!currentVideoId) return; // Exit if no video is playing
 
-            videoElement.style.display = 'none'; // Hide the video
-            videoElement.pause(); // Stop the video
-            videoElement.currentTime = 0; // Reset the video time
-            imageWrapper.style.display = 'block'; // Show the image when the video ends
+            const videoElement = document.getElementById(currentVideoId);
+            const closeButton = document.getElementById("close-video-btn");
+            const imageWrapper = document.querySelector('.image-wrapper');
+
+            // Hide the video and close button, show the image
+            videoElement.style.display = 'none';
+            closeButton.style.display = 'none';
+
+            // Stop and reset the video
+            videoElement.pause();
+            videoElement.currentTime = 0;
+
+            imageWrapper.style.display = 'block';
+
+            // Reset the current video ID
+            currentVideoId = null;
         }
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            const markers = [
+                { position: { x: 1.0, y: 92.6, width: 7.3, height: 5.5 }, videoId: 'about-video', type: 'rectangle' }
+            ];
+            const imageWrapper = document.querySelector('.image-wrapper');
+            markers.forEach(marker => {
+                if (marker.type === 'rectangle') {
+                    const rectangleElement = document.createElement('div');
+                    rectangleElement.className = 'transparent-rectangle';
+                    rectangleElement.style.left = marker.position.x + '%';
+                    rectangleElement.style.top = marker.position.y + '%';
+                    rectangleElement.style.width = marker.position.width + '%';
+                    rectangleElement.style.height = marker.position.height + '%';
+
+                    rectangleElement.onclick = () => toggleVideo(marker.videoId);
+                    imageWrapper.appendChild(rectangleElement);
+                }
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', function () {
             const markers = [
+                { position: { x: 29.00, y: 69.50 }, videoId: 'stuyvesant-house' },
                 { position: { x: 69.60, y: 22.19 }, videoId: 'company-garden-video' },
                 { position: { x: 44.35, y: 33.83 }, videoId: 'broadway-video' },
                 { position: { x: 35.13, y: 37.49 }, videoId: 'fort-amsterdam-video' },
@@ -137,14 +222,12 @@
                 { position: { x: 49.00, y: 81.35 }, videoId: 'city-hall-video' },
                 { position: { x: 4.31, y: 91.10 }, videoId: 'about-video' }
             ];
-
             const imageWrapper = document.querySelector('.image-wrapper');
             markers.forEach(marker => {
                 const markerElement = document.createElement('div');
                 markerElement.className = 'marker';
                 markerElement.style.left = marker.position.x + '%';
                 markerElement.style.top = marker.position.y + '%';
-
                 // Create the core marker SVG
                 const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                 svgElement.setAttribute("viewBox", "0 0 16 16");
@@ -152,9 +235,7 @@
                 <circle cx="8" cy="8" r="8" fill="red"/>
                 <circle cx="8" cy="8" r="3" fill="white"/>
             `;
-
                 markerElement.appendChild(svgElement);
-
                 // Create waves
                 for (let i = 1; i <= 3; i++) {
                     const wave = document.createElement('div');
@@ -162,17 +243,26 @@
                     wave.style.animationDelay = `${i * 0.7}s`; // stagger the animation
                     markerElement.appendChild(wave);
                 }
-
                 markerElement.onclick = () => toggleVideo(marker.videoId);
                 imageWrapper.appendChild(markerElement);
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const closeButton = document.getElementById("close-video-btn");
+            closeButton.addEventListener("click", closeVideo);
+        });
+
     </script>
 </head>
 
 <body>
     <div class="image-wrapper"></div>
+    <button class="close-button" id="close-video-btn"></button>
     <!-- Local Video Elements -->
+    <video id="stuyvesant-house">
+        <source src="vids/StuyvesantHouse.webm" type="video/webm">
+    </video>
     <video id="fort-amsterdam-video">
         <source src="vids/Fort.webm" type="video/webm">
     </video>
