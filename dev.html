@@ -142,49 +142,48 @@
     <script>
 
         let currentVideoId = null;
+        let isTransitioning = false;
 
         function toggleVideo(videoId) {
+            stopAllVideos(); // Stop all videos before starting a new one
             const videoElement = document.getElementById(videoId);
             const closeButton = document.getElementById("close-video-btn");
             const imageWrapper = document.querySelector('.image-wrapper');
 
-            // Hide the image, show the video, and show the close button
+            // Display the video and close button
             imageWrapper.style.display = 'none';
             videoElement.style.display = 'block';
             closeButton.style.display = 'block';
 
             // Play the video
-            videoElement.currentTime = 0;
-            videoElement.play();
+            videoElement.play().catch(err => {
+                console.error("Error playing video:", err);
+            });
 
-            // Set the current video ID
             currentVideoId = videoId;
 
-            // Automatically close when the video ends
-            videoElement.onended = function () {
-                closeVideo();
-            };
+            videoElement.onended = () => closeVideo(videoId);
         }
 
         function closeVideo() {
-            if (!currentVideoId) return; // Exit if no video is playing
-
-            const videoElement = document.getElementById(currentVideoId);
+            stopAllVideos(); // Ensure all videos are stopped
             const closeButton = document.getElementById("close-video-btn");
             const imageWrapper = document.querySelector('.image-wrapper');
 
-            // Hide the video and close button, show the image
-            videoElement.style.display = 'none';
+            // Reset UI elements
             closeButton.style.display = 'none';
-
-            // Stop and reset the video
-            videoElement.pause();
-            videoElement.currentTime = 0;
-
             imageWrapper.style.display = 'block';
 
-            // Reset the current video ID
             currentVideoId = null;
+        }
+
+        function stopAllVideos() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+                video.style.display = 'none';
+            });
         }
         
         document.addEventListener('DOMContentLoaded', function () {
