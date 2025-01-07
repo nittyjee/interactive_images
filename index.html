@@ -17,7 +17,7 @@
         .image-wrapper {
             width: 100vw;
             height: 100vh;
-            background-image: url('images/Main_screen2.png');
+            background-image: url('images/new_Main_screen2.png');
             /* Updated to use the local image */
             background-size: contain;
             /* Ensures the image fits within the viewport without cropping */
@@ -125,6 +125,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             const markers = [
+                { position: { x: 29.00, y: 69.50 }, videoId: 'stuyvesant-house' },
                 { position: { x: 69.60, y: 22.19 }, videoId: 'company-garden-video' },
                 { position: { x: 44.35, y: 33.83 }, videoId: 'broadway-video' },
                 { position: { x: 35.13, y: 37.49 }, videoId: 'fort-amsterdam-video' },
@@ -173,6 +174,9 @@
 <body>
     <div class="image-wrapper"></div>
     <!-- Local Video Elements -->
+    <video id="stuyvesant-house">
+        <source src="vids/StuyvesantHouse.webm" type="video/webm">
+    </video>
     <video id="fort-amsterdam-video">
         <source src="vids/Fort.webm" type="video/webm">
     </video>
