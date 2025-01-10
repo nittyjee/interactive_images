@@ -145,7 +145,6 @@
         let isTransitioning = false;
 
         function toggleVideo(videoId) {
-            stopAllVideos(); // Stop all videos before starting a new one
             const videoElement = document.getElementById(videoId);
             const closeButton = document.getElementById("close-video-btn");
             const imageWrapper = document.querySelector('.image-wrapper');
@@ -161,12 +160,16 @@
             });
 
             currentVideoId = videoId;
-
-            videoElement.onended = () => closeVideo(videoId);
         }
 
         function closeVideo() {
-            stopAllVideos(); // Ensure all videos are stopped
+            const videoElement = document.getElementById(currentVideoId);
+
+            // Reset video to start
+            videoElement.pause();
+            videoElement.currentTime = 0;
+            videoElement.style.display = "none";
+
             const closeButton = document.getElementById("close-video-btn");
             const imageWrapper = document.querySelector('.image-wrapper');
 
@@ -177,15 +180,6 @@
             currentVideoId = null;
         }
 
-        function stopAllVideos() {
-            const videos = document.querySelectorAll('video');
-            videos.forEach(video => {
-                video.pause();
-                video.currentTime = 0;
-                video.style.display = 'none';
-            });
-        }
-        
         document.addEventListener('DOMContentLoaded', function () {
             const markers = [
                 { position: { x: 1.0, y: 92.6, width: 7.3, height: 5.5 }, videoId: 'about-video', type: 'rectangle' }
@@ -259,42 +253,41 @@
     <div class="image-wrapper"></div>
     <button class="close-button" id="close-video-btn"></button>
     <!-- Local Video Elements -->
-    <video id="stuyvesant-house">
+    <video preload="none" id="stuyvesant-house" onended=closeVideo()>
         <source src="vids/StuyvesantHouse.webm" type="video/webm">
     </video>
-    <video id="fort-amsterdam-video">
+    <video preload="none" id="fort-amsterdam-video" onended=closeVideo()>
         <source src="vids/Fort.webm" type="video/webm">
     </video>
-    <video id="company-garden-video">
+    <video preload="none" id="company-garden-video" onended=closeVideo()>
         <source src="vids/Garden.webm" type="video/webm">
     </video>
-    <video id="broadway-video">
+    <video preload="none" id="broadway-video" onended=closeVideo()>
         <source src="vids/Broadway.webm" type="video/webm">
     </video>
-    <video id="church-video">
+    <video preload="none" id="church-video" onended=closeVideo()>
         <source src="vids/Church.webm" type="video/webm">
     </video>
-    <video id="the-wall-video">
+    <video preload="none" id="the-wall-video" onended=closeVideo()>
         <source src="vids/Wall_Final.webm" type="video/webm">
     </video>
-    <video id="canal-video">
+    <video preload="none" id="canal-video" onended=closeVideo()>
         <source src="vids/Canel.webm" type="video/webm">
     </video>
-    <video id="kierstede-house-video">
+    <video preload="none" id="kierstede-house-video" onended=closeVideo()>
         <source src="vids/Kierstede.webm" type="video/webm">
     </video>
-    <video id="house-of-enslaved-workers-video">
+    <video preload="none" id="house-of-enslaved-workers-video" onended=closeVideo()>
         <source src="vids/HouseEnslaved_Final.webm" type="video/webm">
     </video>
-    <video id="dock-video">
+    <video preload="none" id="dock-video" onended=closeVideo()>
         <source src="vids/Dock.webm" type="video/webm">
     </video>
-    <video id="city-hall-video">
+    <video preload="none" id="city-hall-video" onended=closeVideo()>
         <source src="vids/CityHall.webm" type="video/webm">
     </video>
-    <video id="about-video">
+    <video preload="none" id="about-video" onended=closeVideo()>
         <source src="vids/AboutFinalFinal.webm" type="video/webm">
     </video>
 </body>
-
 </html>
